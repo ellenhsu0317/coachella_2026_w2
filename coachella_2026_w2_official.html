@@ -1,0 +1,530 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#EDE4D3;color:#1A1208;min-height:100vh}
+.topbar{background:#EDE4D3;padding:22px 20px 0;border-bottom:1px solid rgba(0,0,0,0.08)}
+.brand{font-size:48px;font-weight:800;text-align:center;color:#1A1208;letter-spacing:-2px;margin-bottom:4px;line-height:1;text-transform:uppercase}
+.brand-info{text-align:center;margin-bottom:16px}
+.brand-info p{font-size:11px;font-weight:500;color:#888}
+.brand-info p span{color:#555}
+.nav-tabs{display:flex;overflow-x:auto}.nav-tabs::-webkit-scrollbar{display:none}
+.ntab{padding:10px 16px 12px;font-size:14px;font-weight:500;color:#1A1208;cursor:pointer;white-space:nowrap;flex-shrink:0;border-bottom:3px solid transparent;transition:all .15s}
+.ntab.on{color:#3A7A2A;border-bottom-color:#3A7A2A;font-weight:600}
+.room-area{background:#EDE4D3;padding:14px 20px 10px;border-bottom:1px solid rgba(0,0,0,0.08)}
+.room-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.room-code-group{display:flex;align-items:center;gap:8px}
+.room-lbl{font-size:11px;font-weight:600;color:#888;letter-spacing:1px;text-transform:uppercase}
+.room-code{font-size:22px;font-weight:700;color:#1A1208;letter-spacing:4px}
+.share-btn{font-size:13px;font-weight:600;color:#3A7A2A;background:transparent;border:1.5px solid #3A7A2A;border-radius:20px;padding:6px 16px;cursor:pointer}
+.join-row{display:flex;gap:8px;align-items:center}
+.join-row input{flex:1;background:#F5EFE2;border:1.5px solid rgba(0,0,0,0.15);border-radius:22px;padding:9px 16px;font-size:14px;outline:none;color:#1A1208;font-family:'DM Sans',sans-serif}
+.join-row input::placeholder{color:#AAA}
+.join-row button{background:#3A7A2A;border:none;border-radius:22px;padding:9px 22px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.mbar{display:flex;gap:7px;flex-wrap:wrap;padding:10px 20px 12px;background:#EDE4D3;border-bottom:1px solid rgba(0,0,0,0.08);min-height:44px;align-items:center}
+.mpill{display:inline-flex;align-items:center;gap:6px;background:#F5EFE2;border:1.5px solid rgba(0,0,0,0.12);border-radius:20px;padding:4px 12px 4px 4px}
+.mpill.me{border-color:#3A7A2A;background:#EBF5E6}
+.mav{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.mn{font-size:13px;font-weight:500;color:#1A1208}
+.ytag{font-size:10px;color:#3A7A2A;font-weight:600;margin-left:2px}
+.filter-wrap{display:block}
+.filter-row{display:flex;gap:10px;padding:14px 20px;background:#EDE4D3;border-bottom:1px solid rgba(0,0,0,0.08);position:relative}
+.stage-dropdown-wrap{position:relative}
+.filter-pill{display:inline-flex;align-items:center;gap:6px;border:1.5px solid rgba(0,0,0,0.2);border-radius:22px;padding:7px 16px;font-size:14px;font-weight:600;color:#1A1208;background:#F5EFE2;cursor:pointer;user-select:none;font-family:'DM Sans',sans-serif}
+.filter-pill.active{border-color:#3A7A2A;color:#3A7A2A;background:#EBF5E6}
+.filter-pill svg{flex-shrink:0;transition:transform .2s}
+.filter-pill.open svg{transform:rotate(180deg)}
+.stage-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:#fff;border:1px solid rgba(0,0,0,0.1);border-radius:14px;min-width:210px;z-index:100;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12)}
+.stage-menu.open{display:block}
+.stage-opt{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:14px;font-weight:500;color:#1A1208;cursor:pointer}
+.stage-opt:hover{background:#F5EFE2}
+.stage-opt.on{color:#3A7A2A;font-weight:600;background:#EBF5E6}
+.stage-opt-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.stage-opt-check{margin-left:auto;color:#3A7A2A;opacity:0}
+.stage-opt.on .stage-opt-check{opacity:1}
+.view{display:none}.view.on{display:block}
+/* SCHEDULE */
+.stage-label{display:flex;align-items:center;gap:8px;padding:10px 20px 5px;margin-top:4px}
+.stage-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.stage-name-lbl{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#888}
+.acard{display:flex;align-items:center;background:#F5EFE2;margin:0 12px 5px;border-radius:10px;padding:10px 14px;gap:12px;cursor:pointer;border:1px solid transparent;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.acard:hover{background:#EDE4D3;border-color:rgba(0,0,0,0.08)}
+.acard.hl{background:#EBF5E6;border-left:3px solid #3A7A2A}
+.acard-left{flex:1;min-width:0}
+.acard-time{font-size:11px;font-weight:600;color:#888;margin-bottom:1px}
+.acard-name{font-size:15px;font-weight:600;color:#1A1208;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acard.hl .acard-name{color:#2A5A1A}
+.acard-checks{display:flex;gap:4px;align-items:center;flex-shrink:0}
+.ck{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px dashed rgba(0,0,0,0.15);color:rgba(0,0,0,0.2);pointer-events:none}
+.ck.on{border-style:solid}
+.acard-cnt{font-size:11px;font-weight:600;color:#AAA;min-width:24px;text-align:right;flex-shrink:0}
+.plus-icon{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#888;font-size:18px;font-weight:300;pointer-events:none}
+.acard.checked-me .plus-icon{background:#3A7A2A;border-color:#3A7A2A;color:#fff;font-size:14px}
+/* TIMELINE */
+.tl-day-tabs{display:flex;background:#EDE4D3;border-bottom:1.5px solid rgba(0,0,0,0.1);padding:0 20px}
+.tl-day-tab{padding:10px 16px;font-size:13px;font-weight:600;color:#AAA;cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap}
+.tl-day-tab.on{color:#3A7A2A;border-bottom-color:#3A7A2A}
+.tl-outer{overflow-x:auto;background:#F5EFE2}
+.tl-container{display:flex;min-width:max-content}
+.tl-stage-col{width:88px;flex-shrink:0;position:sticky;left:0;z-index:10;background:#EDE4D3;border-right:2px solid rgba(0,0,0,0.1)}
+.tl-stage-hdr-cell{height:32px;border-bottom:1.5px solid rgba(0,0,0,0.1);display:flex;align-items:center;padding:0 10px;font-size:8px;font-weight:800;letter-spacing:1.5px;color:#888;text-transform:uppercase}
+.tl-stage-row{height:68px;border-bottom:1px solid rgba(0,0,0,0.07);display:flex;align-items:center;padding:0 8px;gap:5px}
+.tl-stage-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tl-stage-name{font-size:9.5px;font-weight:700;color:#1A1208;line-height:1.25}
+.tl-grid{position:relative;flex:1}
+.tl-time-hdr{height:32px;border-bottom:1.5px solid rgba(0,0,0,0.1);position:relative;background:#EDE4D3}
+.tl-tick{position:absolute;top:0;height:100%;display:flex;align-items:center;padding-left:4px;pointer-events:none}
+.tl-tick span{font-size:9px;font-weight:700;color:#888;white-space:nowrap}
+.tl-rows{position:relative}
+.tl-row-bg{position:absolute;left:0;right:0;border-bottom:1px solid rgba(0,0,0,0.05)}
+.tl-vline{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,0.07);pointer-events:none}
+.tl-vline.hr{background:rgba(0,0,0,0.13)}
+.tl-sunset{position:absolute;top:0;bottom:0;width:2px;background:#F5A623;z-index:5;pointer-events:none}
+.tl-sunset-lbl{position:absolute;top:2px;left:3px;font-size:8px;font-weight:700;color:#F5A623;white-space:nowrap;background:rgba(245,237,208,0.92);padding:1px 4px;border-radius:3px}
+.tl-block{position:absolute;border-radius:7px;cursor:pointer;overflow:hidden;transition:filter .1s;border:2px solid transparent}
+.tl-block:hover{filter:brightness(1.07)}
+.tl-block.me-on{border-color:rgba(0,0,0,0.25)}
+.tl-block.clash{box-shadow:0 0 0 2.5px #E84A4A}
+.tl-block-inner{padding:4px 6px;height:100%;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.tl-block-name{font-size:10.5px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-block-time{font-size:8.5px;font-weight:500;opacity:0.82;white-space:nowrap;overflow:hidden}
+.tl-block-avs{display:flex;gap:2px;overflow:hidden;align-items:center}
+.tl-av{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;border:1px solid rgba(255,255,255,0.5)}
+.clash-tag{background:#E84A4A;color:#fff;font-size:7px;font-weight:800;padding:2px 4px;border-radius:4px;position:absolute;bottom:4px;right:4px;z-index:2;line-height:1.2;white-space:nowrap;pointer-events:none}
+.tl-legend{display:flex;gap:12px;padding:10px 16px;background:#EDE4D3;border-top:1px solid rgba(0,0,0,0.08);font-size:11px;color:#666;flex-wrap:wrap;align-items:center}
+.tl-legend-item{display:flex;align-items:center;gap:5px}
+/* MAP */
+.map-day-tabs{display:flex;background:#EDE4D3;border-bottom:1.5px solid rgba(0,0,0,0.1);padding:0 20px}
+.map-day-tab{padding:9px 14px;font-size:13px;font-weight:600;color:#AAA;cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap}
+.map-day-tab.on{color:#3A7A2A;border-bottom-color:#3A7A2A}
+.map-container{position:relative;background:#F5EDD0;overflow:hidden;user-select:none}
+.map-container img{display:block;width:100%;pointer-events:none}
+.map-svg-overlay{position:absolute;top:0;left:0;overflow:visible}
+.map-popup{position:absolute;background:#fff;border-radius:14px;padding:0;box-shadow:0 6px 28px rgba(0,0,0,0.18);width:230px;z-index:20;display:none;border:1px solid rgba(0,0,0,0.08);overflow:hidden}
+.map-popup.show{display:block}
+.map-popup-hdr{padding:11px 14px 9px;border-bottom:1px solid rgba(0,0,0,0.07);position:relative}
+.map-popup-title{font-size:13px;font-weight:700;color:#1A1208;padding-right:22px}
+.map-popup-badge{display:inline-flex;font-size:10px;font-weight:700;border-radius:99px;padding:2px 8px;margin-top:4px}
+.map-popup-close{position:absolute;top:9px;right:11px;font-size:17px;color:#AAA;cursor:pointer;background:none;border:none;line-height:1}
+.map-popup-body{padding:9px 12px;max-height:270px;overflow-y:auto}
+.map-popup-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;padding-bottom:7px;border-bottom:0.5px solid rgba(0,0,0,0.06)}
+.map-popup-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.map-popup-dot{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.map-popup-sname{font-size:12px;font-weight:600;color:#1A1208}
+.map-popup-stime{font-size:10px;color:#AAA;margin-top:1px}
+.map-popup-who{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}
+.map-popup-av{width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700}
+.map-popup-info{font-size:12px;color:#888;padding:2px 0;line-height:1.5}
+.map-legend{display:flex;flex-wrap:wrap;gap:10px;padding:10px 16px;background:#EDE4D3;border-top:1px solid rgba(0,0,0,0.08);font-size:11px;color:#666}
+.map-legend-item{display:flex;align-items:center;gap:5px}
+.sb{padding:12px 20px;background:#EDE4D3;display:flex;align-items:center;border-top:1px solid rgba(0,0,0,0.1);flex-wrap:wrap;gap:8px;min-height:48px}
+.sc{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.si{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#888}
+.snum{font-weight:700;color:#1A1208}
+.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A1208;color:#fff;padding:10px 22px;font-size:13px;font-weight:600;border-radius:22px;transition:transform .3s;z-index:9999;pointer-events:none;white-space:nowrap}
+.toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">Coachella</div>
+  <div class="brand-info"><p><span>Weekend 2</span> · Apr 17–19, 2026 · Empire Polo Club, Indio CA</p></div>
+  <div class="nav-tabs">
+    <div class="ntab on" id="tf" onclick="sw(this,'sched','Friday')">Friday</div>
+    <div class="ntab" id="ts" onclick="sw(this,'sched','Saturday')">Saturday</div>
+    <div class="ntab" id="tsu" onclick="sw(this,'sched','Sunday')">Sunday</div>
+    <div class="ntab" id="ttl" onclick="sw(this,'timeline','')">Timeline</div>
+    <div class="ntab" id="tm" onclick="sw(this,'map','')">Map</div>
+  </div>
+</div>
+<div class="room-area">
+  <div class="room-row">
+    <div class="room-code-group"><span class="room-lbl">Room</span><span class="room-code" id="rCode">----</span><button id="changeRoomBtn" onclick="showRoomInput()" style="display:none;font-size:11px;font-weight:600;color:#888;background:transparent;border:1px solid rgba(0,0,0,0.2);border-radius:12px;padding:3px 10px;cursor:pointer;margin-left:4px">Change</button></div>
+    <button class="share-btn" onclick="doShare()">Share ↗</button>
+  </div>
+  <div id="roomSetupRow" style="display:flex;flex-direction:column;gap:8px">
+    <div class="join-row">
+      <input id="roomIn" placeholder="Enter Room Code (or leave blank to create new)..." style="letter-spacing:2px;text-transform:uppercase"/>
+      <button onclick="doSetRoom()">Set Room</button>
+    </div>
+  </div>
+  <div class="join-row" id="jr" style="display:none;margin-top:8px"><input id="nIn" placeholder="Enter your name to join..."/><button onclick="doJoin()">Join</button></div>
+</div>
+<div class="mbar" id="mbar"><span style="font-size:13px;color:#AAA;font-weight:500">No crew yet — enter your name above</span></div>
+<div id="filterWrap" style="display:block">
+  <div class="filter-row">
+    <div class="stage-dropdown-wrap">
+      <div class="filter-pill" id="stagePill" onclick="toggleMenu()">
+        <span id="stagePillText">All Stages</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="#1A1208" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="stage-menu" id="stageMenu"></div>
+    </div>
+  </div>
+</div>
+<div class="view on" id="view-sched"></div>
+<div class="view" id="view-timeline">
+  <div class="tl-day-tabs">
+    <div class="tl-day-tab on" onclick="setTlDay(this,'Friday')">Friday 17</div>
+    <div class="tl-day-tab" onclick="setTlDay(this,'Saturday')">Saturday 18</div>
+    <div class="tl-day-tab" onclick="setTlDay(this,'Sunday')">Sunday 19</div>
+  </div>
+  <div class="tl-outer"><div class="tl-container" id="tlCont"></div></div>
+  <div class="tl-legend">
+    <div class="tl-legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#C84A2A;opacity:0.4"></div>No picks</div>
+    <div class="tl-legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#C84A2A;opacity:0.65"></div>Crew picked</div>
+    <div class="tl-legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#C84A2A;border:2px solid rgba(0,0,0,0.3)"></div>You picked</div>
+    <div class="tl-legend-item"><div style="width:2px;height:14px;background:#F5A623"></div>Sunset 7:12 PM</div>
+    <div class="tl-legend-item"><div style="width:14px;height:14px;border-radius:3px;border:2.5px solid #E84A4A"></div>Conflict</div>
+  </div>
+</div>
+<div class="view" id="view-map">
+  <div class="map-container" id="mapCont">
+    <img id="mapImg" alt="2026 Venue Map"/>
+  </div>
+</div>
+<div class="sb"><div class="sc" id="sc"><span style="font-size:13px;color:#AAA;font-weight:500">Join to start planning</span></div></div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){var img=document.getElementById('mapImg');fetch('/mnt/user-data/uploads/1775259242649_image.png').then(function(r){return r.blob();}).then(function(b){img.src=URL.createObjectURL(b);img.onload=function(){if(cv==='map')rMapPins();};}).catch(function(){img.style.display='none';});})();
+
+var C=[{bg:'#3A7A2A',fg:'#fff'},{bg:'#C8861A',fg:'#fff'},{bg:'#7B5EA7',fg:'#fff'},{bg:'#1A7A8C',fg:'#fff'},{bg:'#B05D82',fg:'#fff'},{bg:'#C84A2A',fg:'#fff'},{bg:'#1A5A8C',fg:'#fff'},{bg:'#8C5A1A',fg:'#fff'}];
+var SC={'Coachella Stage':'#C84A2A','Outdoor Theater':'#3A7A2A','Sahara':'#C8861A','Mojave':'#7B5EA7','Gobi':'#1A7A8C','Sonora':'#B05D82','Yuma':'#1A5A8C','Quasar':'#8C5A1A'};
+var SC_L={'Coachella Stage':'#F0C0B0','Outdoor Theater':'#B8D8B8','Sahara':'#F0D8A0','Mojave':'#D4C4EC','Gobi':'#A8D4DC','Sonora':'#E4B8D0','Yuma':'#A8C0DC','Quasar':'#D4C0A8'};
+var STAGES=['Coachella Stage','Outdoor Theater','Sahara','Mojave','Gobi','Sonora','Yuma','Quasar'];
+var SUNSET=19*60+12,PPM=2.2,RH=68;
+var HEADLINERS=['Sabrina Carpenter','Justin Bieber','KAROL G'];
+
+var PINS=[
+  {type:'stage',name:'Coachella Stage',px:41,py:9,color:'#C84A2A'},
+  {type:'stage',name:'Outdoor Theater',px:72,py:12,color:'#3A7A2A'},
+  {type:'stage',name:'Yuma',px:11,py:38,color:'#1A5A8C'},
+  {type:'stage',name:'Sonora',px:65,py:34,color:'#B05D82'},
+  {type:'stage',name:'Gobi',px:67,py:47,color:'#1A7A8C'},
+  {type:'stage',name:'Mojave',px:61,py:58,color:'#7B5EA7'},
+  {type:'stage',name:'Quasar',px:40,py:63,color:'#8C5A1A'},
+  {type:'stage',name:'Sahara',px:20,py:80,color:'#C8861A'},
+  {type:'entrance',name:'Main Entrance',px:10,py:54},
+  {type:'entrance',name:'Sahara VIP',px:19,py:89},
+  {type:'entrance',name:'Emergency Exit (N)',px:55,py:3,isExit:true},
+  {type:'entrance',name:'Emergency Exit (E)',px:87,py:48,isExit:true},
+  {type:'restroom',name:'Restroom',px:30,py:24},{type:'restroom',name:'Restroom',px:53,py:20},
+  {type:'restroom',name:'Restroom',px:48,py:38},{type:'restroom',name:'Restroom',px:70,py:38},
+  {type:'restroom',name:'Restroom',px:47,py:52},{type:'restroom',name:'Restroom',px:30,py:58},
+  {type:'restroom',name:'Restroom',px:24,py:70},{type:'restroom',name:'Restroom',px:58,py:68}
+];
+
+var LN={
+'Friday':[
+  {s:'Coachella Stage',t:'4:15\u20135:20',a:'Record Safari'},
+  {s:'Coachella Stage',t:'5:30\u20136:20',a:'Teddy Swims'},
+  {s:'Coachella Stage',t:'7:00\u20137:55',a:'the xx'},
+  {s:'Coachella Stage',t:'9:05\u201310:35',a:'Sabrina Carpenter'},
+  {s:'Coachella Stage',t:'12:00\u20131:00',a:'Anyma presents AEden'},
+  {s:'Outdoor Theater',t:'2:50\u20133:50',a:'Tiffany Tyson'},
+  {s:'Outdoor Theater',t:'4:00\u20134:50',a:'Dabeull'},
+  {s:'Outdoor Theater',t:'5:20\u20136:10',a:'Lykke Li'},
+  {s:'Outdoor Theater',t:'6:40\u20137:30',a:'Dijon'},
+  {s:'Outdoor Theater',t:'8:05\u20139:00',a:'Turnstile'},
+  {s:'Outdoor Theater',t:'10:35\u201311:50',a:'Disclosure'},
+  {s:'Sahara',t:'2:30\u20133:35',a:'MASSIO'},
+  {s:'Sahara',t:'3:45\u20134:35',a:'Youna'},
+  {s:'Sahara',t:'4:50\u20135:50',a:'HUGEL'},
+  {s:'Sahara',t:'6:15\u20137:15',a:'Marlon Hoffstadt'},
+  {s:'Sahara',t:'8:00\u20138:45',a:'KATSEYE'},
+  {s:'Sahara',t:'9:15\u201310:20',a:'Levity'},
+  {s:'Sahara',t:'10:50\u201311:40',a:'Swae Lee'},
+  {s:'Sahara',t:'12:05\u201312:55',a:'Sexyy Red'},
+  {s:'Mojave',t:'2:00\u20132:50',a:'Novasoul'},
+  {s:'Mojave',t:'3:00\u20133:45',a:'Slayyyter'},
+  {s:'Mojave',t:'4:15\u20135:00',a:'BINI'},
+  {s:'Mojave',t:'5:30\u20136:15',a:'Central Cee'},
+  {s:'Mojave',t:'6:45\u20137:40',a:'Devo'},
+  {s:'Mojave',t:'8:10\u20139:00',a:'Moby'},
+  {s:'Mojave',t:'10:35\u201311:25',a:'Ethel Cain'},
+  {s:'Mojave',t:'11:55\u201312:45',a:'Blood Orange'},
+  {s:'Gobi',t:'2:15\u20132:45',a:'Bob Baker Marionettes'},
+  {s:'Gobi',t:'2:15\u20132:45',a:'Cahuilla Bird Singers & Dancers'},
+  {s:'Gobi',t:'4:00\u20134:40',a:'NewDad'},
+  {s:'Gobi',t:'5:10\u20135:50',a:'Joyce Manor'},
+  {s:'Gobi',t:'6:15\u20136:55',a:'CMAT'},
+  {s:'Gobi',t:'7:20\u20138:00',a:'fakemink'},
+  {s:'Gobi',t:'8:25\u20139:10',a:'Holly Humberstone'},
+  {s:'Gobi',t:'9:50\u201310:35',a:'Joost'},
+  {s:'Gobi',t:'11:05\u201311:55',a:'Creepy Nuts'},
+  {s:'Sonora',t:'1:00\u20131:40',a:'Doom Dave'},
+  {s:'Sonora',t:'1:40\u20132:10',a:'Febuary'},
+  {s:'Sonora',t:'2:35\u20133:15',a:'Carolina Durante'},
+  {s:'Sonora',t:'3:40\u20134:20',a:'Wednesday'},
+  {s:'Sonora',t:'6:00\u20136:40',a:'The Two Lips'},
+  {s:'Sonora',t:'7:10\u20138:00',a:'Ninajirachi'},
+  {s:'Sonora',t:'8:25\u20139:05',a:'Cachirula & Loojan'},
+  {s:'Sonora',t:'10:00\u201310:45',a:'Hot Mulligan'},
+  {s:'Sonora',t:'11:50\u201312:50',a:'Not For Radio'},
+  {s:'Yuma',t:'1:00\u20131:45',a:'Sahar Z'},
+  {s:'Yuma',t:'1:45\u20132:45',a:'Jessica Brankka'},
+  {s:'Yuma',t:'2:45\u20133:45',a:'Arodes'},
+  {s:'Yuma',t:'3:45\u20134:45',a:'Groove Armada'},
+  {s:'Yuma',t:'4:45\u20136:00',a:'Rossi. x Chloé Caillet'},
+  {s:'Yuma',t:'7:15\u20138:30',a:'Prospa'},
+  {s:'Yuma',t:'8:30\u20139:45',a:'Max Dean x Luke Dean'},
+  {s:'Yuma',t:'9:45\u201311:15',a:'Max Styler'},
+  {s:'Yuma',t:'11:15\u201312:55',a:'Gordo'},
+  {s:'Quasar',t:'5:00\u20137:00',a:'Tiga'},
+  {s:'Quasar',t:'7:00\u20139:00',a:'Deep Dish'},
+  {s:'Quasar',t:'9:00\u201311:00',a:'PAWSA'}
+],
+'Saturday':[
+  {s:'Coachella Stage',t:'4:15\u20135:20',a:'Jaqck Glam'},
+  {s:'Coachella Stage',t:'5:30\u20136:20',a:'Addison Rae'},
+  {s:'Coachella Stage',t:'7:00\u20137:50',a:'GIVĒON'},
+  {s:'Coachella Stage',t:'9:00\u201310:10',a:'The Strokes'},
+  {s:'Coachella Stage',t:'11:25\u20131:00',a:'Justin Bieber'},
+  {s:'Outdoor Theater',t:'2:40\u20133:25',a:'Blondshell'},
+  {s:'Outdoor Theater',t:'3:55\u20134:45',a:'Los Hermanos Flores'},
+  {s:'Outdoor Theater',t:'5:10\u20136:00',a:'Alex G'},
+  {s:'Outdoor Theater',t:'7:05\u20137:55',a:'SOMBR'},
+  {s:'Outdoor Theater',t:'8:30\u20139:25',a:'Labrinth'},
+  {s:'Outdoor Theater',t:'10:20\u201311:20',a:'David Byrne'},
+  {s:'Sahara',t:'2:00\u20132:45',a:'Seek-One'},
+  {s:'Sahara',t:'2:50\u20133:50',a:'TEED'},
+  {s:'Sahara',t:'4:00\u20134:50',a:'ZULAN'},
+  {s:'Sahara',t:'5:00\u20135:55',a:'Hamdi'},
+  {s:'Sahara',t:'6:15\u20137:10',a:'¥ØUSUKE ¥UK1MATSU'},
+  {s:'Sahara',t:'8:00\u20138:45',a:'Nine Inch Noize'},
+  {s:'Sahara',t:'9:10\u201310:05',a:'REZZ'},
+  {s:'Sahara',t:'10:30\u201311:25',a:'Adriatique'},
+  {s:'Sahara',t:'11:55\u201312:55',a:'Worship'},
+  {s:'Mojave',t:'3:00\u20133:45',a:'Jack White'},
+  {s:'Mojave',t:'4:30\u20135:20',a:'Fujii Kaze'},
+  {s:'Mojave',t:'5:50\u20136:35',a:'Royel Otis'},
+  {s:'Mojave',t:'7:30\u20138:20',a:'Taemin'},
+  {s:'Mojave',t:'8:55\u20139:45',a:'PinkPantheress'},
+  {s:'Mojave',t:'10:15\u201311:15',a:'Interpol'},
+  {s:'Gobi',t:'2:05\u20132:50',a:'Noga Erez'},
+  {s:'Gobi',t:'4:05\u20134:45',a:'WHATMORE'},
+  {s:'Gobi',t:'5:10\u20135:50',a:'Luísa Sonza'},
+  {s:'Gobi',t:'6:15\u20137:00',a:'Geese'},
+  {s:'Gobi',t:'7:50\u20138:35',a:'Davido'},
+  {s:'Gobi',t:'9:00\u20139:45',a:'BIA'},
+  {s:'Gobi',t:'10:10\u201311:00',a:'Morat'},
+  {s:'Sonora',t:'1:00\u20132:00',a:'Triste Juventud'},
+  {s:'Sonora',t:'2:00\u20132:40',a:'Die Spitz'},
+  {s:'Sonora',t:'3:10\u20133:50',a:'Freak Slug'},
+  {s:'Sonora',t:'4:20\u20135:00',a:'Ecca Vandal'},
+  {s:'Sonora',t:'5:30\u20136:10',a:'Ceremony'},
+  {s:'Sonora',t:'6:40\u20137:20',a:'rusowsky'},
+  {s:'Sonora',t:'7:50\u20138:30',a:'54 Ultra'},
+  {s:'Sonora',t:'9:45\u201310:35',a:'Mind Enterprises'},
+  {s:'Yuma',t:'1:00\u20132:00',a:'Yamagucci'},
+  {s:'Yuma',t:'2:00\u20133:00',a:'GENESI'},
+  {s:'Yuma',t:'3:00\u20134:15',a:'Riordan'},
+  {s:'Yuma',t:'4:15\u20135:30',a:'Mahmut Orhan'},
+  {s:'Yuma',t:'5:30\u20136:45',a:'SOSA'},
+  {s:'Yuma',t:'6:45\u20138:15',a:'Ben Sterling'},
+  {s:'Yuma',t:'8:15\u20139:45',a:'Bedouin'},
+  {s:'Yuma',t:'9:45\u201311:00',a:'Boys Noize'},
+  {s:'Yuma',t:'11:00\u201312:55',a:'Armin van Buuren x Adam Beyer'},
+  {s:'Quasar',t:'5:00\u20137:00',a:'Joezi'},
+  {s:'Quasar',t:'7:00\u20139:00',a:'Afrojack x Shimza'},
+  {s:'Quasar',t:'9:00\u201311:00',a:'David Guetta'}
+],
+'Sunday':[
+  {s:'Coachella Stage',t:'2:45\u20133:30',a:'Gabe Real'},
+  {s:'Coachella Stage',t:'3:40\u20134:15',a:'Tijuana Panthers'},
+  {s:'Coachella Stage',t:'4:45\u20135:30',a:'Wet Leg'},
+  {s:'Coachella Stage',t:'6:10\u20137:10',a:'Major Lazer'},
+  {s:'Coachella Stage',t:'7:50\u20138:40',a:'Young Thug'},
+  {s:'Coachella Stage',t:'9:55\u201311:30',a:'KAROL G'},
+  {s:'Outdoor Theater',t:'3:00\u20133:50',a:'Juicewon'},
+  {s:'Outdoor Theater',t:'4:00\u20134:45',a:'Gigi Perez'},
+  {s:'Outdoor Theater',t:'5:15\u20136:10',a:'CLIPSE'},
+  {s:'Outdoor Theater',t:'6:45\u20137:40',a:'Foster the People'},
+  {s:'Outdoor Theater',t:'8:40\u20139:40',a:'Laufey'},
+  {s:'Outdoor Theater',t:'10:30\u201311:30',a:'BIGBANG'},
+  {s:'Sahara',t:'2:30\u20133:30',a:'LOBOMAN'},
+  {s:'Sahara',t:'3:35\u20134:35',a:'Girl Math (VNSSA x NALA)'},
+  {s:'Sahara',t:'4:45\u20135:45',a:'BUNT.'},
+  {s:'Sahara',t:'6:10\u20137:10',a:'Duke Dumont'},
+  {s:'Sahara',t:'7:25\u20138:25',a:'Mochakk'},
+  {s:'Sahara',t:'9:05\u201310:05',a:'Subtronics'},
+  {s:'Sahara',t:'10:45\u201311:55',a:'Kaskade'},
+  {s:'Mojave',t:'2:30\u20133:10',a:'wyldeflower'},
+  {s:'Mojave',t:'3:15\u20133:55',a:'Samia'},
+  {s:'Mojave',t:'4:25\u20135:10',a:'Little Simz'},
+  {s:'Mojave',t:'5:35\u20136:25',a:'Suicidal Tendencies'},
+  {s:'Mojave',t:'7:10\u20138:10',a:'Iggy Pop'},
+  {s:'Mojave',t:'8:45\u201310:00',a:'FKA twigs'},
+  {s:'Gobi',t:'2:05\u20132:35',a:'flowerovlove'},
+  {s:'Gobi',t:'3:00\u20133:40',a:'The Chats'},
+  {s:'Gobi',t:'4:05\u20134:50',a:'COBRAH'},
+  {s:'Gobi',t:'5:15\u20136:00',a:'Oklou'},
+  {s:'Gobi',t:'6:30\u20137:05',a:'Black Flag'},
+  {s:'Gobi',t:'7:45\u20138:35',a:'TOMORA'},
+  {s:'Gobi',t:'9:05\u20139:55',a:'The Rapture'},
+  {s:'Sonora',t:'1:00\u20132:00',a:'Panda & Chok'},
+  {s:'Sonora',t:'2:00\u20132:40',a:'Glitterer'},
+  {s:'Sonora',t:'3:10\u20133:50',a:'Model/Actriz'},
+  {s:'Sonora',t:'4:20\u20135:00',a:'Jane Remover'},
+  {s:'Sonora',t:'5:30\u20136:10',a:'Los Retros'},
+  {s:'Sonora',t:'6:40\u20137:30',a:'RØZ'},
+  {s:'Sonora',t:'8:00\u20138:40',a:'DRAIN'},
+  {s:'Sonora',t:'9:10\u201310:00',a:'French Police'},
+  {s:'Yuma',t:'1:00\u20132:00',a:'LE YORA'},
+  {s:'Yuma',t:'2:00\u20133:00',a:'AZZECCA'},
+  {s:'Yuma',t:'3:00\u20134:15',a:'&friends'},
+  {s:'Yuma',t:'4:15\u20135:30',a:'MËSTIZA'},
+  {s:'Yuma',t:'5:30\u20137:00',a:'Carlita x Josh Baker'},
+  {s:'Yuma',t:'7:00\u20138:30',a:'Röyksopp'},
+  {s:'Yuma',t:'8:30\u201310:00',a:'WhoMadeWho'},
+  {s:'Yuma',t:'10:00\u201311:55',a:'Green Velvet x AYYBO'},
+  {s:'Quasar',t:'4:00\u20136:00',a:'Jazzy'},
+  {s:'Quasar',t:'6:00\u20138:00',a:'JOY (Anonymous)'},
+  {s:'Quasar',t:'8:00\u201310:00',a:'Fatboy Slim'}
+]};
+
+var rid='',me='',mbrs=[],cks={},cv='sched',cd='Friday',activeStage='',tlDay='Friday',mapDay='Friday';
+function sk(){return 'coa26w2h_'+rid;}
+async function sv(){try{await window.storage.set(sk(),JSON.stringify({m:mbrs,c:cks}),true);}catch(e){}}
+async function ld(){try{var r=await window.storage.get(sk(),true);if(r&&r.value){var d=JSON.parse(r.value);mbrs=d.m||[];cks=d.c||{};}}catch(e){}}
+function gmc(n){var m=mbrs.find(function(x){return x.n===n;});return m?C[m.i%C.length]:C[0];}
+function kk(d,a){return d+'||'+a;}
+function gc(d,a){return cks[kk(d,a)]||[];}
+
+function genRid(){var ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r='';for(var i=0;i<4;i++)r+=ch[Math.floor(Math.random()*ch.length)];return r;}
+
+function applyRoom(r){rid=r;document.getElementById('rCode').textContent=rid;localStorage.setItem('coa26w2_room',rid);document.getElementById('roomSetupRow').style.display='none';document.getElementById('changeRoomBtn').style.display='inline-block';var jr=document.getElementById('jr');jr.style.display='flex';}
+function showRoomInput(){document.getElementById('roomSetupRow').style.display='flex';document.getElementById('roomIn').value='';document.getElementById('roomIn').focus();}
+
+async function doSetRoom(){var inp=document.getElementById('roomIn').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');var r=inp||genRid();applyRoom(r);await ld();rAll();if(me){document.getElementById('jr').style.display='none';poll();}}
+
+function parseRange(str){
+  var pts=str.split('\u2013');if(pts.length<2)return{s:960,e:1020};
+  function tm(t){var m=t.trim().match(/(\d+):(\d+)/);if(!m)return 0;var h=parseInt(m[1]),mi=parseInt(m[2]);if(h<12)h+=12;return h*60+mi;}
+  var s=tm(pts[0]),e=tm(pts[1]);if(e<=s)e+=1440;return{s:s,e:e};
+}
+
+function buildMenu(){var menu=document.getElementById('stageMenu');menu.innerHTML='';var all=document.createElement('div');all.className='stage-opt'+(activeStage===''?' on':'');all.innerHTML='<div class="stage-opt-dot" style="background:#888"></div>All Stages<span class="stage-opt-check">✓</span>';all.addEventListener('click',function(){setStage('');});menu.appendChild(all);STAGES.forEach(function(s){var opt=document.createElement('div');opt.className='stage-opt'+(activeStage===s?' on':'');opt.innerHTML='<div class="stage-opt-dot" style="background:'+(SC[s]||'#888')+'"></div>'+s+'<span class="stage-opt-check">✓</span>';opt.addEventListener('click',function(){setStage(s);});menu.appendChild(opt);});}
+function setStage(s){activeStage=s;document.getElementById('stagePillText').textContent=s||'All Stages';var pill=document.getElementById('stagePill');if(s)pill.classList.add('active');else pill.classList.remove('active');closeMenu();rSched();}
+var menuOpen=false;
+function toggleMenu(){menuOpen=!menuOpen;buildMenu();var m=document.getElementById('stageMenu');var p=document.getElementById('stagePill');if(menuOpen){m.classList.add('open');p.classList.add('open');}else{m.classList.remove('open');p.classList.remove('open');}}
+function closeMenu(){menuOpen=false;document.getElementById('stageMenu').classList.remove('open');document.getElementById('stagePill').classList.remove('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.stage-dropdown-wrap'))closeMenu();});
+
+async function doJoin(){var n=document.getElementById('nIn').value.trim();if(!n)return;me=n;localStorage.setItem('coa26w2_name',me);await ld();if(!mbrs.find(function(m){return m.n===me;})){mbrs.push({n:me,i:mbrs.length});await sv();}document.getElementById('jr').style.display='none';rAll();toast('Welcome, '+me+'!');poll();}
+document.getElementById('nIn').addEventListener('keydown',function(e){if(e.key==='Enter')doJoin();});
+document.getElementById('roomIn').addEventListener('keydown',function(e){if(e.key==='Enter')doSetRoom();});
+async function tog(day,art){if(!me){toast('Enter your name first!');return;}var k=kk(day,art);if(!cks[k])cks[k]=[];var i=cks[k].indexOf(me);if(i>=0)cks[k].splice(i,1);else cks[k].push(me);await sv();rAll();}
+
+function rMbar(){var el=document.getElementById('mbar');if(!mbrs.length){el.innerHTML='<span style="font-size:13px;color:#AAA;font-weight:500">No crew yet — enter your name above</span>';return;}el.innerHTML=mbrs.map(function(m){var c=C[m.i%C.length];return'<div class="mpill'+(m.n===me?' me':'')+'"><div class="mav" style="background:'+c.bg+';color:'+c.fg+'">'+m.n[0].toUpperCase()+'</div><span class="mn">'+m.n+(m.n===me?'<span class="ytag">· you</span>':'')+'</span></div>';}).join('');}
+
+function rSched(){
+  var el=document.getElementById('view-sched');el.innerHTML='';
+  var filtered=LN[cd].filter(function(a){return activeStage===''||a.s===activeStage;});
+  if(!filtered.length){el.innerHTML='<div style="padding:28px 20px;text-align:center;font-size:14px;color:#AAA">No artists.</div>';return;}
+  var st={},ord=[];filtered.forEach(function(a){if(!st[a.s]){st[a.s]=[];ord.push(a.s);}st[a.s].push(a);});
+  ord.forEach(function(stage){
+    var sl=document.createElement('div');sl.className='stage-label';sl.innerHTML='<div class="stage-dot" style="background:'+(SC[stage]||'#1A1208')+'"></div><div class="stage-name-lbl">'+stage+'</div>';el.appendChild(sl);
+    st[stage].forEach(function(a){
+      var hl=HEADLINERS.indexOf(a.a)>=0;var ns=gc(cd,a.a);var isMeOn=(me&&ns.indexOf(me)>=0);
+      var card=document.createElement('div');card.className='acard'+(hl?' hl':'')+(isMeOn?' checked-me':'');
+      var avs=mbrs.length?mbrs.map(function(m){var on=ns.indexOf(m.n)>=0;var c=C[m.i%C.length];return'<div class="ck'+(on?' on':'')+'"'+(on?' style="background:'+c.bg+';border-color:'+c.bg+';color:'+c.fg+'"':'')+'>'+m.n[0].toUpperCase()+'</div>';}).join(''):'';
+      var cnt=ns.length?(ns.length+'/'+mbrs.length):'';
+      card.innerHTML='<div class="acard-left"><div class="acard-time">'+a.t+'</div><div class="acard-name">'+a.a+'</div></div><div class="acard-checks">'+avs+'</div><div class="acard-cnt">'+cnt+'</div><div class="plus-icon">'+(isMeOn?'✓':'+')+'</div>';
+      (function(dy,ar){card.addEventListener('click',function(){tog(dy,ar);});})(cd,a.a);el.appendChild(card);
+    });
+  });
+}
+
+function tlFmt(m){var h=Math.floor(m/60)%24;var mi=m%60;var ap=h>=12?'PM':'AM';var hh=h>12?h-12:(h===0?12:h);return hh+':'+(mi<10?'0':'')+mi+' '+ap;}
+function setTlDay(el,day){document.querySelectorAll('.tl-day-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');tlDay=day;rTimeline();}
+
+function rTimeline(){
+  var cont=document.getElementById('tlCont');cont.innerHTML='';
+  var dd=LN[tlDay];
+  var stages=STAGES.filter(function(s){return dd.some(function(a){return a.s===s;});});
+  var allR=dd.map(function(a){return parseRange(a.t);});
+  var minT=Math.floor(Math.min.apply(null,allR.map(function(r){return r.s;}))/60)*60;
+  var rawMaxT=Math.max.apply(null,allR.map(function(r){return r.e;}));
+  var maxT=Math.ceil(Math.min(rawMaxT,1500)/60)*60;
+  var gW=Math.round((maxT-minT)*PPM);
+  var myList=me?dd.filter(function(a){return gc(tlDay,a.a).indexOf(me)>=0;}).map(function(a){var r=parseRange(a.t);return{a:a.a,s:r.s,e:r.e};}):[]; 
+  function hasConflict(a){var r=parseRange(a.t);return myList.some(function(p){return p.a!==a.a&&r.s<p.e&&r.e>p.s;});}
+
+  var sCol=document.createElement('div');sCol.className='tl-stage-col';
+  var sHdr=document.createElement('div');sHdr.className='tl-stage-hdr-cell';sHdr.textContent='STAGE';sCol.appendChild(sHdr);
+  stages.forEach(function(s){var row=document.createElement('div');row.className='tl-stage-row';var dot=document.createElement('div');dot.className='tl-stage-dot';dot.style.background=SC[s]||'#888';var nm=document.createElement('div');nm.className='tl-stage-name';nm.textContent=s;row.appendChild(dot);row.appendChild(nm);sCol.appendChild(row);});
+  cont.appendChild(sCol);
+
+  var grid=document.createElement('div');grid.className='tl-grid';grid.style.width=gW+'px';grid.style.position='relative';
+  var thdr=document.createElement('div');thdr.className='tl-time-hdr';thdr.style.width=gW+'px';
+  for(var tt=minT;tt<=maxT;tt+=60){var tick=document.createElement('div');tick.className='tl-tick';tick.style.left=Math.round((tt-minT)*PPM)+'px';var sp=document.createElement('span');sp.textContent=tlFmt(tt);tick.appendChild(sp);thdr.appendChild(tick);}
+  grid.appendChild(thdr);
+  var rCont=document.createElement('div');rCont.className='tl-rows';rCont.style.cssText='width:'+gW+'px;height:'+(stages.length*RH)+'px;position:relative';
+  for(var tt2=minT;tt2<=maxT;tt2+=60){var vl=document.createElement('div');vl.className='tl-vline hr';vl.style.cssText='position:absolute;top:0;bottom:0;left:'+Math.round((tt2-minT)*PPM)+'px';rCont.appendChild(vl);}
+  for(var tt3=minT+30;tt3<maxT;tt3+=60){var vl2=document.createElement('div');vl2.className='tl-vline';vl2.style.cssText='position:absolute;top:0;bottom:0;left:'+Math.round((tt3-minT)*PPM)+'px';rCont.appendChild(vl2);}
+  if(SUNSET>=minT&&SUNSET<=maxT){var sl=document.createElement('div');sl.className='tl-sunset';sl.style.cssText='position:absolute;top:0;bottom:0;left:'+Math.round((SUNSET-minT)*PPM)+'px';var slbl=document.createElement('div');slbl.className='tl-sunset-lbl';slbl.textContent='Sunset 7:12 PM';sl.appendChild(slbl);rCont.appendChild(sl);}
+  stages.forEach(function(s,si){var bg=document.createElement('div');bg.className='tl-row-bg';bg.style.cssText='position:absolute;left:0;right:0;top:'+(si*RH)+'px;height:'+RH+'px';rCont.appendChild(bg);});
+
+  stages.forEach(function(s,si){
+    dd.filter(function(a){return a.s===s;}).forEach(function(a){
+      var r=parseRange(a.t);var ns=gc(tlDay,a.a);var isMeOn=(me&&ns.indexOf(me)>=0);var isConf=isMeOn&&hasConflict(a);var hasCrew=ns.length>0;
+      var clampedE=Math.min(r.e,maxT);
+      var left=Math.round((r.s-minT)*PPM);var w=Math.max(Math.round((clampedE-r.s)*PPM)-2,16);
+      var block=document.createElement('div');block.className='tl-block'+(isMeOn?' me-on':'')+(isConf?' clash':'');
+      block.style.cssText='position:absolute;left:'+left+'px;width:'+w+'px;top:'+(si*RH+4)+'px;height:'+(RH-8)+'px;';
+      if(isMeOn){block.style.background=SC[s];block.style.color='#fff';}
+      else if(hasCrew){block.style.background=SC[s];block.style.color='#fff';block.style.opacity='0.65';}
+      else{block.style.background=SC_L[s];block.style.color='#555';block.style.opacity='0.45';}
+      var inner=document.createElement('div');inner.className='tl-block-inner';
+      var topD=document.createElement('div');
+      var nm2=document.createElement('div');nm2.className='tl-block-name';nm2.textContent=a.a;
+      var tm2=document.createElement('div');tm2.className='tl-block-time';tm2.textContent=a.t;
+      topD.appendChild(nm2);topD.appendChild(tm2);inner.appendChild(topD);
+      if(ns.length>0){var avsD=document.createElement('div');avsD.className='tl-block-avs';ns.slice(0,5).forEach(function(n){var c=gmc(n);var av=document.createElement('div');av.className='tl-av';av.style.background=c.bg;av.style.color=c.fg;av.title=n;av.textContent=n[0].toUpperCase();avsD.appendChild(av);});inner.appendChild(avsD);}
+      block.appendChild(inner);
+      if(isConf){var banner=document.createElement('div');banner.className='clash-tag';banner.textContent='⚠ CONFLICT';block.appendChild(banner);}
+      (function(dy,ar){block.addEventListener('click',function(e){e.stopPropagation();tog(dy,ar);});})(tlDay,a.a);
+      rCont.appendChild(block);
+    });
+  });
+  grid.appendChild(rCont);cont.appendChild(grid);
+}
+
+function setMapDay(el,day){document.querySelectorAll('.map-day-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');mapDay=day;}
+function rMapPins(){}
+
+function rSum(){var el=document.getElementById('sc');if(!mbrs.length){el.innerHTML='<span style="font-size:13px;color:#AAA;font-weight:500">Join to start planning</span>';return;}el.innerHTML=mbrs.map(function(m){var c=C[m.i%C.length];return'<div class="si"><div class="sdot" style="background:'+c.bg+'"></div><span>'+m.n+'</span></div>';}).join('');}
+
+function rAll(){rMbar();if(cv==='sched')rSched();else if(cv==='timeline')rTimeline();rSum();}
+
+function sw(el,view,day){
+  document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');cv=view;if(day)cd=day;
+  document.getElementById('filterWrap').style.display=(view==='sched')?'block':'none';
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});document.getElementById('view-'+view).classList.add('on');
+  if(view==='sched')rSched();else if(view==='timeline')rTimeline();
+}
+function doShare(){var tx='Coachella 2026 W2 — Room: '+rid;if(navigator.clipboard){navigator.clipboard.writeText(tx).then(function(){toast('Copied! Room: '+rid);}).catch(function(){toast('Room: '+rid);});}else toast('Room: '+rid);}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
+var pt=null;
+function poll(){if(pt)clearInterval(pt);pt=setInterval(async function(){var pv=JSON.stringify({m:mbrs,c:cks});await ld();if(JSON.stringify({m:mbrs,c:cks})!==pv)rAll();},3000);}
+(async function(){
+  var savedRoom=localStorage.getItem('coa26w2_room');
+  var savedName=localStorage.getItem('coa26w2_name');
+  if(savedRoom){
+    applyRoom(savedRoom);
+    await ld();
+    if(savedName&&mbrs.find(function(m){return m.n===savedName;})){me=savedName;document.getElementById('jr').style.display='none';rAll();toast('Welcome back, '+me+'!');poll();}
+    else{rSched();rSum();}
+  } else {
+    rSched();rSum();
+  }
+})();
+</script>
+</body>
+</html>
